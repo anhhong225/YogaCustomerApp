@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="YogaCustomerApp.ClassList"
+             Title="Yoga Classes">
+
+    <VerticalStackLayout Padding="3">
+        <!-- Header with title and cart -->
+        <Grid Padding="10" ColumnDefinitions="*,Auto">
+            <Label Text="Available Yoga Classes"
+                   FontSize="18"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start" />
+
+            <Button Text="🛒 View Cart"
+                    Clicked="OnViewCartClicked"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    Grid.Column="1" />
+        </Grid>
+
+        <!-- Filter Row -->
+        <ScrollView Orientation="Horizontal" Padding="0,0,0,5">
+            <HorizontalStackLayout Spacing="6" Padding="10,0">
+                <!-- Day buttons -->
+                <Button Text="Mon" Clicked="OnDayFilterClicked"/>
+                <Button Text="Tue" Clicked="OnDayFilterClicked"/>
+                <Button Text="Wed" Clicked="OnDayFilterClicked"/>
+                <Button Text="Thu" Clicked="OnDayFilterClicked"/>
+                <Button Text="Fri" Clicked="OnDayFilterClicked"/>
+                <Button Text="Sat" Clicked="OnDayFilterClicked"/>
+                <Button Text="Sun" Clicked="OnDayFilterClicked"/>
+
+                <!-- Calendar button -->
+                <ImageButton Source="calendar.png"
+                             Clicked="OnCalendarClicked"
+                             HeightRequest="36"
+                             WidthRequest="36"
+                             BackgroundColor="Transparent"/>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Search Bar -->
+        <SearchBar x:Name="searchBar"
+                   Placeholder="Search by day or time..."
+                   TextChanged="OnSearchTextChanged"/>
+
+        <!-- Class List -->
+        <CollectionView ItemsSource="{Binding FilteredClassItems}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="2" BackgroundColor="#F3F3F3" CornerRadius="8">
+                        <Grid Padding="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Grid.ColumnSpan="2"
+                                   FontAttributes="Bold"
+                                   FontSize="18"
+                                   TextColor="DarkSlateBlue"
+                                   Text="{Binding Course.type}" />
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="{Binding Schedule.date, StringFormat='Date: {0}'}" />
+
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding Course.dayofweek, StringFormat='Day: {0}'}" />
+
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="{Binding Course.time, StringFormat='Time: {0}'}" />
+
+                            <Label Grid.Row="2" Grid.Column="1"
+                                   Text="{Binding Schedule.teacher, StringFormat='Teacher: {0}'}" />
+
+                            <ImageButton Grid.Row="0" Grid.Column="1"
+                                         Source="shop_cart.png"
+                                         BackgroundColor="Green"
+                                         Clicked="OnAddToCartClicked"
+                                         HeightRequest="40"
+                                         WidthRequest="45"
+                                         CornerRadius="5"
+                                         HorizontalOptions="End"
+                                         VerticalOptions="Start"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

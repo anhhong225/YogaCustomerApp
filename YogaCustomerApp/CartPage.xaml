@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="YogaCustomerApp.CartPage"
+             Title="Your Cart">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Classes in Your Cart"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <CollectionView x:Name="cartCollectionView"
+                            HeightRequest="250"
+                            SelectionMode="None"
+                            ItemsSource="{Binding ShoppingCart}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="LightGray" CornerRadius="10" Padding="10" Margin="8">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Course.type}"
+                                       FontAttributes="Bold"
+                                       FontSize="18"
+                                       TextColor="DarkSlateBlue"/>
+                                <Label Text="{Binding Schedule.date}" />
+                                <Label Text="{Binding Course.time}" />
+                                <Label Text="{Binding Schedule.teacher}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Entry x:Name="nameEntry"
+                   Placeholder="Your Name" 
+                   Margin="8"/>
+            <Entry x:Name="emailEntry"
+                   Placeholder="Your Email"
+                   Keyboard="Email"
+                   Margin="8"/>
+
+            <Button Text="Submit Booking"
+                    BackgroundColor="Orange"
+                    TextColor="White"
+                    Clicked="OnSubmitClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
