@@ -51,9 +51,11 @@ public partial class CartPage : ContentPage
     private async void SubmitCart(string customerName, string customerEmail)
     {
         var firebaseClient = new FirebaseClient("https://yogaadminfirebase-default-rtdb.asia-southeast1.firebasedatabase.app/");
+
+        // Get existing bookings to determine the next index
         var existingBookings = await firebaseClient
-        .Child("Bookings")
-        .OnceAsync<Booking>();
+            .Child("Bookings")
+            .OnceAsync<Booking>();
 
         int maxBookingIndex = 0;
         foreach (var b in existingBookings)
@@ -64,25 +66,33 @@ public partial class CartPage : ContentPage
                 if (number > maxBookingIndex) maxBookingIndex = number;
             }
         }
-        string bookingIndex = $"booking_{maxBookingIndex + 1}";
-        var booking = new Booking
-        {
-            customerEmail = customerEmail,
-            customerName = customerName,
-            bookingDate = DateTime.Now.ToString("dd-MM-yyyy"),
-            status = "Booked",
-            scheduleId = ShoppingCart.Select(item => item.Schedule.id).ToList()
-        };
 
-        await firebaseClient
-            .Child("Bookings")
-            .Child(bookingIndex)
-            .PutAsync(booking);
+        int bookingCounter = maxBookingIndex + 1;
+
+        // Create one booking entry per schedule
+        foreach (var item in ShoppingCart)
+        {
+            string bookingIndex = $"booking_{bookingCounter++}";
+            var booking = new Booking
+            {
+                customerEmail = customerEmail,
+                customerName = customerName,
+                bookingDate = DateTime.Now.ToString("dd-MM-yyyy"),
+                status = "Booked",
+                scheduleId = $"schedule_{item.Schedule.id}"
+            };
+
+            await firebaseClient
+                .Child("Bookings")
+                .Child(bookingIndex)
+                .PutAsync(booking);
+        }
 
         ShoppingCart.Clear();
         await DisplayAlert("Success", "Your classes have been booked!", "OK");
         await Navigation.PushAsync(new BookedClassPage(customerEmail));
     }
+
     private void OnSubmitClicked(object sender, EventArgs e)
     {
         string name = nameEntry.Text?.Trim();

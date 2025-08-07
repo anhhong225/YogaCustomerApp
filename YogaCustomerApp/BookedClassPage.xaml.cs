@@ -40,11 +40,11 @@ public partial class BookedClassPage : ContentPage
         {
             foreach (var booking in bookingList)
             {
-                if (booking.scheduleId == null) continue;
-
-                foreach (var scheduleId in booking.scheduleId)
+                if (!string.IsNullOrEmpty(booking.scheduleId) &&
+                booking.scheduleId.StartsWith("schedule_") &&
+                int.TryParse(booking.scheduleId.Replace("schedule_", ""), out int parsedId))
                 {
-                    var schedule = schedules.FirstOrDefault(s => s.Object.id == scheduleId)?.Object;
+                    var schedule = schedules.FirstOrDefault(s => s.Object.id == parsedId)?.Object;
                     var course = courses.FirstOrDefault(c => c.Object.id == schedule?.yogaCourseId)?.Object;
 
                     if (schedule != null && course != null)

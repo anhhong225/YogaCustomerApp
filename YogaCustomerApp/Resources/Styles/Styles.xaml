@@ -424,4 +424,14 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
+    <Style x:Key="FilterChipStyle" TargetType="Button">
+        <Setter Property="HeightRequest" Value="36"/>
+        <Setter Property="WidthRequest" Value="36"/>
+        <Setter Property="CornerRadius" Value="18"/>
+        <Setter Property="BackgroundColor" Value="#E0E0E0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextColor" Value="Black"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
 </ResourceDictionary>

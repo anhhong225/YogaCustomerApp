@@ -11,8 +11,8 @@ public partial class ClassList : ContentPage
     public ObservableCollection<ClassItem> FilteredClassItems { get; set; } = new();
     public ObservableCollection<ClassItem> ShoppingCart { get; set; } = new();
 
-    private string selectedDay = null;
-    private string selectedDate = null;
+    private HashSet<string> selectedDays = new();
+    private DateTime? selectedDate = null;
 
     public ClassList()
     {
@@ -64,16 +64,25 @@ public partial class ClassList : ContentPage
         }
     }
 
+    private void OnDateSelected(object sender, DateChangedEventArgs e)
+    {
+        selectedDate = e.NewDate;
+        selectedDateLabel.Text = $"Selected: {selectedDate:dd-MM-yyyy}";
+        ApplyFilters();
+    }
+
     private void ApplyFilters()
     {
         string keyword = searchBar.Text?.ToLower() ?? "";
 
         var filtered = AllClassItems.Where(item =>
-            (string.IsNullOrEmpty(selectedDay) || item.Course.dayofweek?.Equals(selectedDay, StringComparison.OrdinalIgnoreCase) == true) &&
-            (string.IsNullOrEmpty(selectedDate) || item.Schedule.date == selectedDate) &&
+            (selectedDays.Count == 0 || selectedDays.Contains(item.Course.dayofweek)) &&
+            (!selectedDate.HasValue || item.Schedule.date == selectedDate.Value.ToString("dd-MM-yyyy")) &&
             (string.IsNullOrEmpty(keyword) ||
-             item.Course.dayofweek?.ToLower().Contains(keyword) == true ||
-             item.Course.time?.ToLower().Contains(keyword) == true)
+            item.Course.type?.ToLower().Contains(keyword) == true ||
+            item.Course.dayofweek?.ToLower().Contains(keyword) == true ||
+            item.Course.time?.ToLower().Contains(keyword) == true)
+
         ).ToList();
 
         FilteredClassItems.Clear();
@@ -90,18 +99,48 @@ public partial class ClassList : ContentPage
     {
         if (sender is Button button)
         {
-            selectedDay = button.Text;
+            string shortDay = button.Text;
+
+            string fullDay = shortDay switch
+            {
+                "M" => "Mon",
+                "T" => "Tue",
+                "W" => "Wed",
+                "Th" => "Thu",
+                "F" => "Fri",
+                "Sa" => "Sat",
+                "Su" => "Sun",
+                _ => null
+            };
+
+            if (fullDay == null)
+                return;
+
+            // Toggle selected day and update visual style
+            if (selectedDays.Contains(fullDay))
+            {
+                selectedDays.Remove(fullDay);
+                button.BackgroundColor = Colors.White;
+                button.TextColor = Colors.Black;
+            }
+            else
+            {
+                selectedDays.Add(fullDay);
+                button.BackgroundColor = Colors.DodgerBlue;
+                button.TextColor = Colors.White;
+            }
+
             ApplyFilters();
         }
     }
 
     private async void OnCalendarClicked(object sender, EventArgs e)
     {
-        DateTime? selected = await DisplayDatePicker();
-
-        if (selected.HasValue)
+        var picked = await DisplayDatePicker();
+        if (picked.HasValue)
         {
-            selectedDate = selected.Value.ToString("yyyy-MM-dd");
+            selectedDate = picked.Value;
+            selectedDateLabel.Text = $"Selected: {selectedDate:dd-MM-yyyy}";
             ApplyFilters();
         }
     }
@@ -136,6 +175,24 @@ public partial class ClassList : ContentPage
         var date = await tcs.Task;
         await Navigation.PopModalAsync();
         return date;
+    }
+    private void OnClearFiltersClicked(object sender, EventArgs e)
+    {
+        selectedDays.Clear();
+        selectedDate = null;
+        searchBar.Text = string.Empty;
+
+        // Reset button highlights
+        foreach (var child in DayButtonStack.Children)
+        {
+            if (child is Button b)
+            {
+                b.BackgroundColor = Colors.White;
+                b.TextColor = Colors.Black;
+            }
+        }
+
+        ApplyFilters();
     }
 
     private void OnAddToCartClicked(object sender, EventArgs e)
