@@ -4,78 +4,84 @@
              x:Class="YogaCustomerApp.ClassList"
              Title="Yoga Classes">
 
-    <VerticalStackLayout Padding="3">
-        <!-- Header with title and cart -->
-        <Grid Padding="10" ColumnDefinitions="*,Auto">
-            <Label Text="Available Yoga Classes"
-                   FontSize="18"
-                   VerticalOptions="Center"
-                   HorizontalOptions="Start" />
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header, Filters, and Controls -->
+        <VerticalStackLayout Grid.Row="0" Padding="3">
 
-            <Button Text="🛒"
-                    Clicked="OnViewCartClicked"
-                    HorizontalOptions="End"
-                    VerticalOptions="Center"
-                    Grid.Column="1" />
-        </Grid>
+            <!-- Header with title and cart -->
+            <Grid Padding="10" ColumnDefinitions="*,Auto">
+                <Label Text="Available Yoga Classes"
+                       FontSize="18"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start" />
 
-        <!-- Search and Filters Card -->
-        <Frame Padding="12" Margin="5,0" BackgroundColor="#F2F2F2" CornerRadius="8">
-            <VerticalStackLayout Spacing="8">
-                <!-- Search Bar -->
-                <SearchBar x:Name="searchBar"
-                   Placeholder="Search by Courses"
-                   TextChanged="OnSearchTextChanged"
-                   BackgroundColor="White"
-                   Margin="0,0,0,5"/>
+                <Button Text="🛒"
+                        Clicked="OnViewCartClicked"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        Grid.Column="1" />
+            </Grid>
 
-                <!-- Filter by Day of Week -->
-                <Label Text="Filter by Day of Week"
-               FontAttributes="Bold"
-               FontSize="14"/>
-                <HorizontalStackLayout x:Name="DayButtonStack" Spacing="6">
-                    <Button Text="M" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="T" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="W" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="Th" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="F" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="Sa" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                    <Button Text="Su" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
-                </HorizontalStackLayout>
+            <!-- Search and Filters Card -->
+            <Frame Padding="12" Margin="5,0" BackgroundColor="#F2F2F2" CornerRadius="8">
+                <VerticalStackLayout Spacing="8">
 
-                <!-- Filter by Date -->
-                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                    <Label x:Name="selectedDateLabel"
-                   Text="Filter by Date: No date selected"
-                   FontSize="14"
-                   VerticalOptions="Center"/>
-                    <ImageButton Source="calendar.png"
-                         Clicked="OnCalendarClicked"
-                         HeightRequest="24"
-                         WidthRequest="24"
-                         BackgroundColor="Transparent"
-                         Grid.Column="1"/>
-                </Grid>
+                    <!-- Search Bar -->
+                    <SearchBar x:Name="searchBar"
+                               Placeholder="Search by Courses"
+                               TextChanged="OnSearchTextChanged"
+                               BackgroundColor="White"
+                               Margin="0,0,0,5"/>
 
-                <!-- Clear Filters -->
-                <Button Text="Clear Filters"
-                Clicked="OnClearFiltersClicked"
-                BackgroundColor="LightGray"
-                FontAttributes="Bold"/>
-            </VerticalStackLayout>
-        </Frame>
+                    <!-- Filter by Day of Week -->
+                    <Label Text="Filter by Day of Week"
+                           FontAttributes="Bold"
+                           FontSize="14"/>
+                    <HorizontalStackLayout x:Name="DayButtonStack" Spacing="6">
+                        <Button Text="M" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="T" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="W" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="Th" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="F" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="Sa" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                        <Button Text="Su" Style="{StaticResource FilterChipStyle}" Clicked="OnDayFilterClicked"/>
+                    </HorizontalStackLayout>
 
-        <!-- Hidden DatePicker -->
-        <DatePicker x:Name="datePicker"
-            IsVisible="False"
-            DateSelected="OnDateSelected" />
+                    <!-- Filter by Date -->
+                    <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                        <Label x:Name="selectedDateLabel"
+                               Text="Filter by Date: No date selected"
+                               FontSize="14"
+                               VerticalOptions="Center"/>
+                        <ImageButton Source="calendar.png"
+                                     Clicked="OnCalendarClicked"
+                                     HeightRequest="24"
+                                     WidthRequest="24"
+                                     BackgroundColor="Transparent"
+                                     Grid.Column="1"/>
+                    </Grid>
 
-        <!-- Class List -->
-        <CollectionView ItemsSource="{Binding FilteredClassItems}">
+                    <!-- Clear Filters -->
+                    <Button Text="Clear Filters"
+                            Clicked="OnClearFiltersClicked"
+                            BackgroundColor="LightGray"
+                            FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Hidden DatePicker -->
+            <DatePicker x:Name="datePicker"
+                        IsVisible="False"
+                        DateSelected="OnDateSelected" />
+        </VerticalStackLayout>
+
+        <!-- Scrollable Class List -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding FilteredClassItems}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame Margin="2" BackgroundColor="#F3F3F3" CornerRadius="8">
-                        <Grid Padding="8" >
+                        <Grid Padding="8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -89,37 +95,37 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Grid.Row="0" Grid.ColumnSpan="3"
-                           FontAttributes="Bold"
-                           FontSize="18"
-                           TextColor="DarkSlateBlue"
-                           Text="{Binding Course.type}" />
+                                   FontAttributes="Bold"
+                                   FontSize="18"
+                                   TextColor="DarkSlateBlue"
+                                   Text="{Binding Course.type}" />
 
                             <Label Grid.Row="1" Grid.Column="0"
-                           Text="{Binding Schedule.date, StringFormat='Date: {0}'}" />
+                                   Text="{Binding Schedule.date, StringFormat='Date: {0}'}" />
 
                             <Label Grid.Row="1" Grid.Column="1"
-                           Text="{Binding Course.dayofweek, StringFormat='Day: {0}'}" />
+                                   Text="{Binding Course.dayofweek, StringFormat='Day: {0}'}" />
 
                             <Label Grid.Row="2" Grid.Column="0"
-                           Text="{Binding Course.time, StringFormat='Time: {0}'}" />
+                                   Text="{Binding Course.time, StringFormat='Time: {0}'}" />
 
                             <Label Grid.Row="2" Grid.Column="1"
-                           Text="{Binding Schedule.teacher, StringFormat='Teacher: {0}'}" />
+                                   Text="{Binding Schedule.teacher, StringFormat='Teacher: {0}'}" />
 
-                            <!-- Vertically centered cart button -->
+                            <!-- Cart Button -->
                             <ImageButton Grid.Row="3" Grid.Column="2"
-                                 Source="shop_cart.png"
-                                 BackgroundColor="Green"
-                                 Clicked="OnAddToCartClicked"
-                                 HeightRequest="30"
-                                 WidthRequest="30"
-                                 CornerRadius="8"
-                                 HorizontalOptions="End"
-                                 VerticalOptions="End" />
+                                         Source="shop_cart.png"
+                                         BackgroundColor="Green"
+                                         Clicked="OnAddToCartClicked"
+                                         HeightRequest="30"
+                                         WidthRequest="30"
+                                         CornerRadius="8"
+                                         HorizontalOptions="End"
+                                         VerticalOptions="End" />
                         </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
